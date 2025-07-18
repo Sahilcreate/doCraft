@@ -79,7 +79,34 @@ CREATE TABLE task_tags (
 
 - One `user` -> many `goals` and `tasks`
 - One `goal` -> many `tasks`
+- Many `task` <-> many `tags`
 - Tasks can exist without goals, but not without users
+- Tasks and tags can exist without each others
+- Tag doesn't need a user directly
+
+---
+
+## Routes Schema
+
+```txt
+`/`                 -> One index route. Kind of like a home page
+                       It will show a sidebar with options for categories and tags for filter
+                       It will also show all the tasks
+`/profile`          -> Inside Header. It will have link to user profile
+`/goals`            -> Show all categories
+`/goals/:goalId`    -> Show specific category info and its related tasks
+`/tags`             -> Show all tags
+`/tags/:tagId`      -> Show specific tag indo and its related details
+`/tasks/:taskId`    -> Show task details
+`/?goal=1&tag=3`    -> Query for filtering tasks on home page
+                       There can be just one query or can be more than one
+                       There can also be a sort method for added_date and due-date
+                       There will also be a filter of is_completed
+```
+
+The query logic can be in a separate utility function because the query can be made from many routes, like, `/?goals=...&tags=...&sort=...`, `/goals/goalId/?tags=...&sort=...`, `/tags/tagId/?goal=...&sort=...`
+
+---
 
 ## 18-07-2025
 
@@ -88,15 +115,53 @@ CREATE TABLE task_tags (
 ```bash
 .
 ├── app.js
+├── ca_base64.txt
+├── ca.pem
 ├── controllers
+│   ├── goalsController.js
+│   ├── indexController.js
+│   ├── index.js
+│   ├── profileController.js
+│   ├── tagsController.js
+│   └── tasksController.js
 ├── db
+│   ├── addTables.js
 │   └── populatedb.js
+├── middlewares
+│   └── setCurrentUser.js
 ├── notes
 │   └── NOTES.md
 ├── package.json
 ├── package-lock.json
 ├── public
+│   ├── goal.css
+│   ├── goals.css
+│   ├── index.css
+│   ├── profile.css
+│   ├── tag.css
+│   ├── tags.css
+│   └── task.css
 ├── README.md
 ├── routes
+│   ├── 404Router.js
+│   ├── goalsRouter.js
+│   ├── index.js
+│   ├── indexRouter.js
+│   ├── profileRouter.js
+│   ├── tagsRouter.js
+│   └── tasksRouter.js
+├── utils
 └── views
+    ├── footer.ejs
+    ├── goal.ejs
+    ├── goals.ejs
+    ├── header.ejs
+    ├── index.ejs
+    ├── profile.ejs
+    ├── sidebar.ejs
+    ├── tag.ejs
+    ├── tags.ejs
+    └── task.ejs
+
+8 directories, 40 files
 ```
