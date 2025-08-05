@@ -108,6 +108,99 @@ The query logic can be in a separate utility function because the query can be m
 
 ---
 
+## Page Schema
+
+### Global Layout
+
+- **Header**
+
+  - Logo (linked to `/`)
+  - Link to `/profile`
+
+- **Footer**
+  - Copyright doCraft
+  - Link to GitHun
+
+### `/` - Home Route
+
+- **Sidebar**
+
+  - Multi-select filter for:
+    - Goals
+    - Tags
+  - Filter for:
+    - Tasks due before a specific date
+    - Sort by `added_date` or `due_date` (asc/desc)
+
+- **Main Area**
+  - Displays all tasks (filtered if URL query is present)
+  - `Add Task` button → navigates to task creation form (`/tasks/new`)
+  - Task delete options present here
+
+### `/profile` - Profile Route
+
+- Shows demo user profile
+- Includes header and footer
+- No sidebar
+
+### `/goals` - Goals List
+
+- Lists all user goals
+- `Add Goal` mini form (inline)
+- Option to delete any goal
+- Includes header and footer
+- No sidebar
+
+### `/goals/:goalId` - Single Goal View
+
+- Displays detailed info for the goal
+- Lists all tasks under this goal
+- Sidebar includes:
+  - Tag filters
+  - Due-before filter
+  - Sort options
+- Goal filter becomes **single-select links**
+- Option to edit goal
+- Header and footer present
+
+### `/tags` - Tags List
+
+- Lists all user tags
+- `Add Tag` mini form (inline)
+- Option to delete any tag
+- Includes header and footer
+- No sidebar
+
+### `/tags/:tagId` - Single Tag View
+
+- Displays detailed info for the tag
+- Lists all tasks under this tag
+- Sidebar includes:
+  - Goal filters
+  - Due-before filter
+  - Sort options
+- Tag filter becomes **single-select links**
+- Option to edit tag
+- Header and footer present
+
+### `/tasks/:taskId` - Task Details
+
+- Shows full details of a task
+- `Edit Task` button opens the same form as creation, pre-filled
+- Task can be deleted here too
+
+### Task Delete Behavior
+
+- Tasks can be deleted from:
+  - `/`
+  - `/goals/:goalId`
+  - `/tags/:tagId`
+  - `/tasks/:taskId`
+
+---
+
+---
+
 ## 18-07-2025
 
 ### Current tree
@@ -165,3 +258,178 @@ The query logic can be in a separate utility function because the query can be m
 
 8 directories, 40 files
 ```
+
+## 19-07-2025
+
+- I started with setup of `routes` and `controllers`.
+- And I am done with showing tasks on `/` route (without the filters and sorting, mind you.)
+- Added a form for storing new task.
+
+I can now kind of see why building an app alone can be really time consuming.  
+On top of all these if we not go the Monolithic route and go `React+Express` with Express server providing us API endpoints, things can get really messy really fast!
+
+> If you are reading this, Hope you are doing well!
+
+### Current tree
+
+```bash
+.
+├── app.js
+├── ca_base64.txt
+├── ca.pem
+├── controllers
+│   ├── goalController.js
+│   ├── goalsController.js
+│   ├── indexController.js
+│   ├── index.js
+│   ├── profileController.js
+│   ├── tagController.js
+│   ├── tagsController.js
+│   ├── taskFormController.js
+│   └── tasksController.js
+├── db
+│   ├── addTables.js
+│   ├── pool.js
+│   ├── populatedb.js
+│   └── queries.js
+├── middlewares
+│   └── setCurrentUser.js
+├── notes
+│   └── NOTES.md
+├── package.json
+├── package-lock.json
+├── public
+│   ├── goal.css
+│   ├── goals.css
+│   ├── index.css
+│   ├── profile.css
+│   ├── tag.css
+│   ├── tags.css
+│   └── task.css
+├── README.md
+├── routes
+│   ├── 404Router.js
+│   ├── goalsRouter.js
+│   ├── index.js
+│   ├── indexRouter.js
+│   ├── profileRouter.js
+│   ├── tagsRouter.js
+│   └── tasksRouter.js
+├── tests
+│   └── buildTaskQuery.test.js
+├── utils
+│   └── buildTaskQuery.js
+└── views
+    ├── goals
+    │   ├── detail.ejs
+    │   └── list.ejs
+    ├── index.ejs
+    ├── partials
+    │   ├── footer.ejs
+    │   ├── header.ejs
+    │   └── sidebar.ejs
+    ├── profile.ejs
+    ├── tags
+    │   ├── detail.ejs
+    │   └── list.ejs
+    └── tasks
+        ├── form.ejs
+        └── view.ejs
+
+13 directories, 48 files
+```
+
+## 05-08-2025
+
+I need to form a habit of commiting.  
+Just completed and commited. There is still one thing left - adding error page. for now i am just showing it as `console.error()`. I think i will add this in next update when i add authentication. Oh and connecting this with Aiven database.
+
+I think i also blundered in middle by commiting keys and such but later have to revert to last commit and that kind of took some progress away.
+
+> Note to self: Learn Git properly.
+
+I also had some problem with successfully configuring Tailwind with express and ejs. This article helped me.
+(Medium Article)[https://medium.com/@hannnirin/setting-up-express-mvc-ejs-tailwindcss-4-0-2ccac72dad59]
+
+### Current Tree
+
+```bash
+.
+├── app.js
+├── controllers
+│   ├── goalDetailController.js
+│   ├── goalFormController.js
+│   ├── goalsListController.js
+│   ├── indexController.js
+│   ├── index.js
+│   ├── profileController.js
+│   ├── tagDetailController.js
+│   ├── tagFormController.js
+│   ├── tagsListController.js
+│   ├── taskFormController.js
+│   └── tasksController.js
+├── db
+│   ├── addTables.js
+│   ├── pool.js
+│   ├── populatedb.js
+│   └── queries.js
+├── middlewares
+│   └── setCurrentUser.js
+├── notes
+│   └── NOTES.md
+├── package.json
+├── package-lock.json
+├── postcss.config.js
+├── public
+│   ├── styles
+│   │   ├── build.css
+│   │   └── styles.css
+│   └── utils
+│       ├── buildTaskQuery.js
+│       └── sidebarFormHandler.js
+├── README.md
+├── routes
+│   ├── 404Router.js
+│   ├── goalsRouter.js
+│   ├── index.js
+│   ├── indexRouter.js
+│   ├── profileRouter.js
+│   ├── tagsRouter.js
+│   └── tasksRouter.js
+├── tailwind.config.js
+├── tests
+│   └── buildTaskQuery.test.js
+└── views
+    ├── goals
+    │   ├── detail.ejs
+    │   ├── form.ejs
+    │   └── list.ejs
+    ├── index.ejs
+    ├── layout
+    │   ├── noSidebarLayout.ejs
+    │   └── sidebarLayout.ejs
+    ├── messageOnly.ejs
+    ├── partials
+    │   ├── footer.ejs
+    │   ├── header.ejs
+    │   └── sidebar.ejs
+    ├── profile.ejs
+    ├── tags
+    │   ├── detail.ejs
+    │   ├── form.ejs
+    │   └── list.ejs
+    └── tasks
+        ├── card.ejs
+        ├── form.ejs
+        └── view.ejs
+
+15 directories, 52 files
+```
+
+### What I want with this project
+
+I am thinking of continuing this project instead of making new ones. Like instead of making `Project: Members Only` or `Project: Blog API` to learn Authentication and API, i will integrate them with this project. I will keep that idea on shelf.
+
+Another thing i want to add is better distinction of tasks, like priority wise.  
+Oh and adding recurring task functionality. That would be cool. Also to handle errors gracefully, maybe something like `flash errors`.  
+Not pagination, don't think that's needed.
