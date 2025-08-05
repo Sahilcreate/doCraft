@@ -59,11 +59,15 @@ VALUES
 async function main() {
   console.log("Seeding tables and inserting sample data...");
   const client = new Client({
-    connectionString: process.env.DATABASE_URL,
-    // ssl: {
-    //   rejectUnauthorized: true,
-    //   ca: fs.readFileSync(path.resolve(__dirname, "../ca.pem")).toString(),
-    // },
+    user: process.env.PGUSER,
+    password: process.env.PGPASSWORD,
+    host: process.env.PGHOST,
+    port: process.env.PGPORT,
+    database: process.env.PGDATABASE,
+    ssl: {
+      rejectUnauthorized: true,
+      ca: fs.readFileSync(path.resolve(__dirname, "../ca.pem")).toString(),
+    },
   });
 
   try {

@@ -1,11 +1,15 @@
 const { Pool } = require("pg");
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  // ssl: {
-  //   rejectUnauthorized: true,
-  //   ca: Buffer.from(process.env.CA_CERT, "base64").toString(),
-  // },
+  host: process.env.PGHOST,
+  user: process.env.PGUSER,
+  database: process.env.PGDATABASE,
+  password: process.env.PASSWORD,
+  port: process.env.PGPORT,
+  ssl: {
+    rejectUnauthorized: true,
+    ca: Buffer.from(process.env.CA_CERT, "base64").toString(),
+  },
 });
 
 pool.on("error", (err) => {
