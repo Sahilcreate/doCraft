@@ -296,23 +296,8 @@
   .max-w-9\/12 {
     max-width: calc(9/12 * 100%);
   }
-  .max-w-fit {
-    max-width: fit-content;
-  }
   .max-w-lg {
     max-width: var(--container-lg);
-  }
-  .max-w-max {
-    max-width: max-content;
-  }
-  .max-w-min {
-    max-width: min-content;
-  }
-  .max-w-none {
-    max-width: none;
-  }
-  .max-w-prose {
-    max-width: 65ch;
   }
   .max-w-screen-md {
     max-width: var(--breakpoint-md);
@@ -610,9 +595,6 @@
   .break-words {
     overflow-wrap: break-word;
   }
-  .text-ellipsis {
-    text-overflow: ellipsis;
-  }
   .whitespace-normal {
     white-space: normal;
   }
@@ -670,10 +652,6 @@
   .shadow-sm {
     --tw-shadow: 0 1px 3px 0 var(--tw-shadow-color, rgb(0 0 0 / 0.1)), 0 1px 2px -1px var(--tw-shadow-color, rgb(0 0 0 / 0.1));
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-  }
-  .outline {
-    outline-style: var(--tw-outline-style);
-    outline-width: 1px;
   }
   .filter {
     filter: var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,);
@@ -905,11 +883,6 @@
   inherits: false;
   initial-value: 0 0 #0000;
 }
-@property --tw-outline-style {
-  syntax: "*";
-  inherits: false;
-  initial-value: solid;
-}
 @property --tw-blur {
   syntax: "*";
   inherits: false;
@@ -963,6 +936,11 @@
   syntax: "*";
   inherits: false;
 }
+@property --tw-outline-style {
+  syntax: "*";
+  inherits: false;
+  initial-value: solid;
+}
 @layer properties {
   @supports ((-webkit-hyphens: none) and (not (margin-trim: inline))) or ((-moz-orient: inline) and (not (color:rgb(from red r g b)))) {
     *, ::before, ::after, ::backdrop {
@@ -984,7 +962,6 @@
       --tw-ring-offset-width: 0px;
       --tw-ring-offset-color: #fff;
       --tw-ring-offset-shadow: 0 0 #0000;
-      --tw-outline-style: solid;
       --tw-blur: initial;
       --tw-brightness: initial;
       --tw-contrast: initial;
@@ -998,6 +975,7 @@
       --tw-drop-shadow-color: initial;
       --tw-drop-shadow-alpha: 100%;
       --tw-drop-shadow-size: initial;
+      --tw-outline-style: solid;
     }
   }
 }

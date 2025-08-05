@@ -12,14 +12,14 @@
   </div>
 
   <!-- Tasks Wrapper -->
-  <div class="tasks-wrapper space-y-6">
+  <div class="tasks-wrapper space-y-4">
     <% if ( tasks.length === 0 ) { %>
     <p class="no-tasks-msg text-gray-500 italic">
       No tasks yet. Add one to get started!
     </p>
     <% } else { %> <% tasks.forEach((task) => { %>
     <div
-      class="task flex items-center justify-between p-4 rounded-lg shadow-sm border text-sm <%= task.is_completed ? 'bg-gray-200 opacity-70' : 'bg-white' %>"
+      class="task flex items-center justify-between bg-white shadow rounded-lg p-4 text-sm <%= task.is_completed ? 'bg-gray-200 opacity-70' : 'bg-white' %>"
     >
       <div class="flex items-center gap-3 flex-1">
         <form action="/tasks/<%= task.id %>/toggle" method="post">
