@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/styles/build.css" />
+  </head>
+  <body class="min-w-fit">
+    <%- include('../partials/header') %>
+
+    <div class="main bg-gray-100 text-gray-800">
+      <div class="main-inwrapper flex min-h-screen">
+        <div class="sidebar-wrapper w-64 flex-shrink-0 border-r bg-gray-50">
+          <%- include('../partials/sidebar', { sidebar }) %>
+        </div>
+        <div class="content-wrapper flex-1 p-8">
+          <% const contentType = { index: '../index', goalDetail:
+          '../goals/detail', tagDetail: '../tags/detail' }[content.type]; %> <%-
+          include(contentType, { content }) %>
+        </div>
+      </div>
+    </div>
+
+    <%- include('../partials/footer') %>
+    <script src="/utils/sidebarFormHandler.js"></script>
+  </body>
+</html>
