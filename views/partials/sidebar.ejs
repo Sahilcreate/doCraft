@@ -1,0 +1,114 @@
+<% const {type, typeId, goals, tags, namedValues} = sidebar %>
+<div class="sidebar w-64 bg-gray-50 border-r p-6 space-y-8 overflow-y-auto h-screen text-sm text-gray-800">
+
+    <% if (type == "goal") { %>
+      <div>
+        <h2 class="text-base font-semibold mb-2">Goals:</h2>
+        <div class="space-y-2">
+          <% goals.forEach((goal) => { %>
+              <a href="/goals/<%= goal.id %>">
+                <button class="w-full text-left px-3 py-2 rounded-md transition-all cursor-pointer truncate
+                  <%= goal.id == typeId 
+                    ? 'bg-blue-100 text-blue-700 font-medium' 
+                    : 'hover:bg-gray-100' %>">
+                  <%= goal.title %>
+                </button>
+              </a>
+          <% }); %>
+        </div>
+      </div>
+    <% } %>
+
+    <% if (type == "tag") { %>
+      <div>
+        <h2 class="text-base font-semibold mb-2">Tags:</h2>
+        <div class="space-y-2">
+          <% tags.forEach((tag) => { %>
+              <a href="/tags/<%= tag.id %>">
+                <button class=" w-full text-left px-3 py-2 rounded-md transition-all cursor-pointer truncate
+                  <%= tag.id == typeId 
+                    ? 'bg-blue-100 text-blue-700 font-medium' 
+                    : 'hover:bg-gray-100' %>">
+                  <%= tag.name %>
+                </button>
+              </a>          
+          <% }); %>
+        </div>
+      </div>
+    <% } %>
+
+  <form action="" method="get" id="sidebar-form" class="space-y-6">
+    <% if (type !== "goal") { %>
+      <div>
+          <h2 class="text-base font-semibold mb-2">Goals:</h2>
+          <div class="space-y-2">
+            <% goals.forEach((goal) => { %>
+
+                <label for="goal-<%= goal.id %>" class="flex items-center gap-2 truncate">
+                  <input type="checkbox" id="goal-<%= goal.id %>" name="goals" value="<%=
+                  goal.id %>" class="form-checkbox text-blue-600 rounded" <%= namedValues.goals?.includes(`${goal.id}`) ? "checked" : "" %> />
+                  <%= goal.title %>
+                </label>
+
+            <% }); %>
+          </div>
+      </div>
+    <% } %>
+  
+  <% if (type !== "tag") { %>
+    <div>
+      <div class="text-base font-semibold mb-2">Filter Tags:</div>
+      <div class="space-y-2">
+        <% tags.forEach((tag) => { %>
+        
+          <label for="tag-<%= tag.id %>" class="flex items-center gap-2 truncate">
+            <input type="checkbox" id="tag-<%= tag.id %>" name="tags" value="<%=
+            tag.id %>" class="form-checkbox text-blue-600 rounded" <%= namedValues.tags?.includes(`${tag.id}`) ? "checked" : "" %> />
+            <%= tag.name %>
+          </label>
+        <% }); %>
+      </div>
+    </div>
+  <% } %>
+
+
+  <div>
+    <label for="dueBefore" class="block text-base font-semibold mb-2">Before Date: </label>
+    <input type="date" id="dueBefore" name="dueBefore" 
+      value="<%= namedValues.dueBefore || '' %>"
+      class="w-full px-3 py-2 border rounded-md cursor-pointer transition-all 
+        hover:outline-1 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+  </div>
+
+  <div>
+    <label for="sort" class="block text-base font-semibold mb-2">Sort By: </label>
+    <select name="sort" id="sort" class="w-full px-3 py-2 border rounded-md cursor-pointer transition-all 
+      hover:outline-1 focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <option value="default">All</option>
+      <option value="created-at-asc" <%= namedValues.sort == "created-at-asc" ? "selected" : "" %>>Creation Date (Ascending)</option>
+      <option value="created-at-desc" <%= namedValues.sort == "created-at-desc" ? "selected" : "" %>>Creation Date (Descending)</option>
+      <option value="due-date-asc" <%= namedValues.sort == "due-date-asc" ? "selected" : "" %>>Due Date (Ascending)</option>
+      <option value="due-date-desc" <%= namedValues.sort == "due-date-desc" ? "selected" : "" %>>Due Date (Descending)</option>
+    </select>
+  </div>
+
+  <div >
+    <label for="show" class="block text-base font-semibold mb-2">Show:</label>
+    <select name="show" id="show" class="w-full px-3 py-2 border rounded-md cursor-pointer transition-all 
+      hover:outline-1 focus:outline-none focus:ring-2 focus:ring-blue-500">
+      <option value="default">All</option>
+      <option value="is_completed_true" <%= namedValues.show == "is_completed_true" ? "selected" : "" %>>Completed</option>
+      <option value="is_completed_false" <%= namedValues.show == "is_completed_false" ? "selected" : "" %>>Pending</option>
+    </select>
+  </div>
+  
+  <div class="flex gap-2 pt-2">
+    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-all cursor-pointer">Apply</button>
+    <button type="button" id="form-reset-btn" class="px-4 py-2 border rounded-md hover:bg-gray-100 transition-all cursor-pointer">Reset</button>
+  </div>
+</form>
+</div>
+
+
+
+
