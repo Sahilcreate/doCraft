@@ -1,0 +1,71 @@
+<% const { editTagForm, tag, errors } = content %>
+
+<div class="bg-gray-100 flex flex-col items-center py-10 px-4">
+  <% if (errors) { %>
+  <div class="bg-red-100 text-red-800 p-3 rounded-md mb-4">
+    <ul class="list-disc pl-5">
+      <% errors.forEach(error => { %>
+      <li><%= error.msg %></li>
+      <% }) %>
+    </ul>
+  </div>
+  <% } %>
+  <div class="w-full max-w-2xl bg-white p-8 rounded-lg shadow space-y-6">
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+      <button
+        class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-sm rounded-md transition cursor-pointer"
+        onClick="history.back()"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5 inline-block mr-2"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M15 19l-7-7 7-7"
+          />
+        </svg>
+        Go Back
+      </button>
+      <h2 class="text-xl font-semibold text-gray-800">
+        <%= editTagForm ? "Edit Tag" : "Create New Tag" %>
+      </h2>
+    </div>
+
+    <!-- Form -->
+    <% const formAction = editTagForm ? `/tags/${tag.id}/form` : '/tags/form';
+    %>
+    <form action="<%= formAction %>" method="post" class="space-y-6">
+      <!-- Tag Name -->
+      <div>
+        <label for="name" class="block font-semibold text-gray-700">
+          Name
+        </label>
+        <input
+          type="text"
+          name="name"
+          id="name"
+          value="<%= editTagForm ? tag.name : errors ? tag.name : '' %>"
+          required
+          class="mt-1 w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none hover:outline-1"
+        />
+      </div>
+
+      <!-- Submit -->
+      <div class="pt-4">
+        <button
+          type="submit"
+          class="bg-blue-600 text-white px-5 py-2 rounded-md hover:bg-blue-700 transition cursor-pointer"
+        >
+          <%= editTagForm ? 'Edit Tag' : 'Create Tag' %>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
