@@ -1,5 +1,3 @@
-cat << 'EOF' > README.md
-
 # doCraft App
 
 A demo Inventory Management system built with **Node.js**, **Express**, **PostgreSQL**, and **Tailwind CSS**. This app allows users to manage tasks, goals, and tags – perfect for organizing productivity or store inventory-style items.
