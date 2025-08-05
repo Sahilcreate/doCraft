@@ -1,0 +1,44 @@
+<% const { user, goals, tasks, tags } = content %>
+<div class="bg-gray-100 flex flex-col items-center py-10 px-4">
+  <div class="w-full max-w-3xl bg-white rounded-lg shadow-md p-8 space-y-8">
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+      <div>
+        <p class="text-base text-gray-500">/Profile</p>
+        <h2 class="text-2xl font-semibold text-gray-800">
+          @<%= user.username %>
+        </h2>
+      </div>
+      <div class="space-x-4">
+        <button
+          disabled
+          class="bg-gray-300 text-gray-600 px-4 py-2 rounded-md text-sm cursor-not-allowed"
+        >
+          Log Out
+        </button>
+        <button
+          disabled
+          class="bg-gray-300 text-gray-600 px-4 py-2 rounded-md text-sm cursor-not-allowed"
+        >
+          Edit Profile
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats Section -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
+      <div class="bg-gray-50 p-4 rounded-lg shadow-inner">
+        <p class="text-gray-500">Total Goals</p>
+        <p class="text-xl font-bold text-blue-600"><%= goals.length %></p>
+      </div>
+      <div class="bg-gray-50 p-4 rounded-lg shadow-inner">
+        <p class="text-gray-500">Total Tags</p>
+        <p class="text-xl font-bold text-green-600"><%= tags.length %></p>
+      </div>
+      <div class="bg-gray-50 p-4 rounded-lg shadow-inner">
+        <p class="text-gray-500">Total Tasks</p>
+        <p class="text-xl font-bold text-purple-600"><%= tasks.length %></p>
+      </div>
+    </div>
+  </div>
+</div>
