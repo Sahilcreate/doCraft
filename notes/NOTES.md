@@ -433,3 +433,5 @@ I am thinking of continuing this project instead of making new ones. Like instea
 Another thing i want to add is better distinction of tasks, like priority wise.  
 Oh and adding recurring task functionality. That would be cool. Also to handle errors gracefully, maybe something like `flash errors`.  
 Not pagination, don't think that's needed.
+
+Also learn how to properly link database. Like I encountered problem while seeding the date. Node was rejecting the certificate and i had to seed the data without any certificate. Didn't get any answers at that time. Will try to look for it once more or ask on TOP Discord.
