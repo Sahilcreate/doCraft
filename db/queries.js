@@ -28,7 +28,7 @@ async function taskByIdGet(taskId) {
             '[]'
         ) AS tags
         FROM tasks t
-        JOIN goals g ON g.id = t.goal_id
+        LEFT JOIN goals g ON g.id = t.goal_id
         LEFT JOIN task_tags tt ON tt.task_id = t.id
         LEFT JOIN tags tg ON tg.id = tt.tag_id
         WHERE t.id = $1
@@ -36,7 +36,7 @@ async function taskByIdGet(taskId) {
     `,
       [taskId]
     );
-
+    console.log(rows[0]);
     return rows[0];
   } catch (err) {
     throw err;

@@ -10,7 +10,10 @@
     <% } %>
 
     <div class="space-y-2 text-sm text-gray-700">
+      <% if (task.goal.id) { %>
       <div><span class="font-semibold">Goal:</span> <%= task.goal.title %></div>
+      <% }; %>
+
       <div>
         <span class="font-semibold">Due Date:</span>
         <%= task.due_date.toLocaleString('en-US', { month: 'long', day:

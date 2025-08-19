@@ -59,7 +59,7 @@ function buildTaskQuery({ goals = [], tags = [], dueBefore = "", sort, show }) {
 
   const query = `
         SELECT DISTINCT ON (t.id) t.* FROM tasks AS t
-        JOIN goals AS g ON g.id = t.goal_id
+        LEFT JOIN goals AS g ON g.id = t.goal_id
         LEFT JOIN task_tags AS tt ON tt.task_id = t.id
         LEFT JOIN tags AS tg ON tg.id = tt.tag_id
         ${whereClause}
