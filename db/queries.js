@@ -329,7 +329,7 @@ async function getTaskCount(userId) {
     const result = await pool.query(
       `SELECT COUNT(*)
      FROM tasks AS t
-     JOIN goals AS g ON g.id = t.goal_id
+     LEFT JOIN goals AS g ON g.id = t.goal_id
      WHERE t.user_id = $1`,
       [userId]
     );
