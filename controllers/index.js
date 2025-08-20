@@ -1,3 +1,10 @@
+const {
+  showLogin,
+  login,
+  showRegister,
+  register,
+  logout,
+} = require("./authController");
 const { goalController } = require("./goalDetailController");
 const {
   newGoalFormControllerGet,
@@ -51,6 +58,11 @@ const controllers = {
   editTaskFormControllerGet,
   editTaskFormControllerPost,
   taskDelete,
+  showLogin,
+  login,
+  showRegister,
+  register,
+  logout,
 };
 
 module.exports = { controllers };

@@ -1,3 +1,4 @@
+const { authRouter } = require("./auth");
 const { goalsRouter } = require("./goalsRouter");
 const { indexRouter } = require("./indexRouter");
 const { profileRouter } = require("./profileRouter");
@@ -10,6 +11,7 @@ const routes = {
   tagsRouter,
   goalsRouter,
   tasksRouter,
+  authRouter,
 };
 
 module.exports = { routes };
