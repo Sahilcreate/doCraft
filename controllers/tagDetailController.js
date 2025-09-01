@@ -1,7 +1,8 @@
-const queries = require("../db/queries");
+const { TaskQueries, GoalQueries, TagQueries } = require("../db/queries");
 const { buildTaskQuery } = require("../public/utils/buildTaskQuery");
 
 async function tagController(req, res) {
+  const userId = req.user.id;
   const tagId = Number(req.params.tagId);
 
   let goalsQuery = req.query.goals || [];
@@ -21,13 +22,13 @@ async function tagController(req, res) {
 
   try {
     const [goalsArray, tagsArray, tag] = await Promise.all([
-      queries.goalsGet(),
-      queries.tagsGet(),
-      queries.tagByIdGet(tagId),
+      GoalQueries.goalsGet(userId),
+      TagQueries.tagsGet(userId),
+      TagQueries.tagByIdGet({ tagId, userId }),
     ]);
 
-    const { query, values } = buildTaskQuery(filters);
-    const tasks = await queries.tasksGet({ query: query, values: values });
+    const { query, values } = buildTaskQuery(filters, userId);
+    const tasks = await TaskQueries.tasksGet({ query: query, values: values });
 
     res.render("layout/sidebarLayout", {
       title: "Tag",

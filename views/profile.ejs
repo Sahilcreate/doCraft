@@ -1,4 +1,4 @@
-<% const { user, goals, tasks, tags } = content %>
+<% const { user, rooms, messages ,goals, tasks, tags } = content %>
 <div class="bg-gray-100 flex flex-col items-center py-10 px-4">
   <div class="w-full max-w-3xl bg-white rounded-lg shadow-md p-8 space-y-8">
     <!-- Header -->
@@ -11,17 +11,26 @@
       </div>
       <div class="space-x-4">
         <button
-          disabled
-          class="bg-gray-300 text-gray-600 px-4 py-2 rounded-md text-sm cursor-not-allowed"
+          class="bg-gray-300 text-gray-600 px-4 py-2 rounded-md text-sm hover:text-gray-800 cursor-pointer"
         >
-          Log Out
+          <a href="/auth/logout"> Log Out </a>
         </button>
+        <% if (user.role === "guest") { %>
         <button
-          disabled
           class="bg-gray-300 text-gray-600 px-4 py-2 rounded-md text-sm cursor-not-allowed"
+          disabled
         >
           Edit Profile
         </button>
+        <% } else { %>
+        <a href="/profile/edit">
+          <button
+            class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm hover:bg-blue-700 cursor-pointer"
+          >
+            Edit Profile
+          </button>
+        </a>
+        <% } %>
       </div>
     </div>
 
@@ -39,6 +48,54 @@
         <p class="text-gray-500">Total Tasks</p>
         <p class="text-xl font-bold text-purple-600"><%= tasks.length %></p>
       </div>
+    </div>
+
+    <!-- Rooms Joined Section -->
+    <div>
+      <h3 class="text-lg font-semibold text-gray-700 mb-3">Rooms Joined</h3>
+      <% if (rooms.length === 0) { %>
+      <p class="text-gray-500 italic">No rooms joined yet.</p>
+      <% } else { %>
+      <ul class="list-disc pl-5 space-y-1">
+        <% rooms.forEach(room => { %>
+        <li>
+          <a
+            href="/clubhouse/rooms/<%= room.id %>"
+            class="text-blue-600 hover:text-blue-800 hover:underline"
+          >
+            <%= room.title %>
+          </a>
+        </li>
+        <% }) %>
+      </ul>
+      <% } %>
+    </div>
+
+    <!-- Messages Section -->
+    <div>
+      <h3 class="text-lg font-semibold text-gray-700 mb-3">Your Messages</h3>
+      <% if (messages.length === 0) { %>
+      <p class="text-gray-500 italic">No messages sent yet.</p>
+      <% } else { %>
+      <div class="space-y-3">
+        <% messages.forEach(msg => { %>
+        <a
+          href="/clubhouse/rooms/<%= msg.room_id %>"
+          class="block bg-gray-50 shadow-sm rounded-lg p-3 hover:bg-gray-100 transition"
+        >
+          <div class="flex justify-between items-center">
+            <span class="font-semibold text-blue-600"
+              ><%= msg.room_title %></span
+            >
+            <span class="text-xs text-gray-400"
+              ><%= new Date(msg.created_at).toLocaleString() %></span
+            >
+          </div>
+          <p class="mt-2 text-gray-800 truncate"><%= msg.content %></p>
+        </a>
+        <% }) %>
+      </div>
+      <% } %>
     </div>
   </div>
 </div>

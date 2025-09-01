@@ -1,8 +1,14 @@
-function buildTaskQuery({ goals = [], tags = [], dueBefore = "", sort, show }) {
+function buildTaskQuery(
+  { goals = [], tags = [], dueBefore = "", sort, show },
+  userId
+) {
   const conditions = [];
   const values = [];
 
   let idx = 1;
+
+  conditions.push(`t.user_id = $${idx++}`);
+  values.push(userId);
 
   if (goals.length) {
     conditions.push(`g.id = ANY($${idx++})`);

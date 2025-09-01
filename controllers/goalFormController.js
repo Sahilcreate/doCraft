@@ -1,5 +1,5 @@
 const { validationResult } = require("express-validator");
-const queries = require("../db/queries");
+const { GoalQueries } = require("../db/queries");
 
 async function newGoalFormControllerGet(req, res) {
   res.render("layout/noSidebarLayout", {
@@ -29,7 +29,7 @@ async function newGoalFormControllerPost(req, res) {
   }
 
   try {
-    await queries.newGoalPost({
+    await GoalQueries.newGoalPost({
       title,
       description,
       userId,
@@ -42,10 +42,11 @@ async function newGoalFormControllerPost(req, res) {
 }
 
 async function editGoalFormControllerGet(req, res) {
+  const userId = req.user.id;
   const goalId = req.params.goalId;
 
   try {
-    const goal = await queries.goalByIdGet(goalId);
+    const goal = await GoalQueries.goalByIdGet({ goalId, userId });
 
     res.render("layout/noSidebarLayout", {
       title: "Edit Goal: Form",
@@ -62,6 +63,7 @@ async function editGoalFormControllerGet(req, res) {
 }
 
 async function editGoalFormControllerPost(req, res) {
+  const userId = req.user.id;
   const errors = validationResult(req);
   const goalId = Number(req.params.goalId);
   const { title, description } = req.body;
@@ -79,10 +81,11 @@ async function editGoalFormControllerPost(req, res) {
   }
 
   try {
-    await queries.editGoalPost({
+    await GoalQueries.editGoalPost({
       title,
       description,
       goalId,
+      userId,
     });
     res.redirect("/goals");
   } catch (err) {
@@ -92,9 +95,10 @@ async function editGoalFormControllerPost(req, res) {
 }
 
 async function goalDelete(req, res) {
+  const userId = Number(req.user.id);
   const goalId = Number(req.params.goalId);
   try {
-    await queries.goalDelete(goalId);
+    await GoalQueries.goalDelete({ goalId, userId });
   } catch (err) {
     console.error(`Error in goalDelete: ${err.message}`);
   }

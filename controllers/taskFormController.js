@@ -1,11 +1,12 @@
-const queries = require("../db/queries");
+const { TaskQueries, GoalQueries, TagQueries } = require("../db/queries");
 const { validationResult } = require("express-validator");
 
 async function newTaskFormControllerGet(req, res) {
   try {
+    const userId = req.user.id;
     const [goals, tags] = await Promise.all([
-      queries.goalsGet(),
-      queries.tagsGet(),
+      GoalQueries.goalsGet(userId),
+      TagQueries.tagsGet(userId),
     ]);
 
     if (goals.length === 0 || tags.length === 0) {
@@ -41,12 +42,13 @@ async function newTaskFormControllerGet(req, res) {
 
 async function editTaskFormControllerGet(req, res) {
   const taskId = req.params.taskId;
+  const userId = req.user.id;
 
   try {
     const [goals, tags, task] = await Promise.all([
-      queries.goalsGet(),
-      queries.tagsGet(),
-      queries.taskByIdGet(taskId),
+      GoalQueries.goalsGet(userId),
+      TagQueries.tagsGet(userId),
+      TaskQueries.taskByIdGet({ taskId, userId }),
     ]);
 
     if (goals.length === 0 || tags.length === 0) {
@@ -91,8 +93,8 @@ async function newTaskFormControllerPost(req, res) {
 
   if (!errors.isEmpty()) {
     const [goals, tags] = await Promise.all([
-      queries.goalsGet(),
-      queries.tagsGet(),
+      GoalQueries.goalsGet(userId),
+      TagQueries.tagsGet(userId),
     ]);
     return res.render("layout/noSidebarLayout", {
       title: "New Task Form",
@@ -107,7 +109,7 @@ async function newTaskFormControllerPost(req, res) {
   }
 
   try {
-    await queries.newTaskPost({
+    await TaskQueries.newTaskPost({
       title,
       description,
       goalId: goals,
@@ -124,6 +126,7 @@ async function newTaskFormControllerPost(req, res) {
 }
 
 async function editTaskFormControllerPost(req, res) {
+  const userId = req.user.id;
   const taskId = Number(req.params.taskId);
   const { title, description, goals, tags, date } = req.body;
   const tagList = Array.isArray(tags) ? tags : [tags];
@@ -133,9 +136,9 @@ async function editTaskFormControllerPost(req, res) {
 
   if (!errors.isEmpty()) {
     const [goals, tags, task] = await Promise.all([
-      queries.goalsGet(),
-      queries.tagsGet(),
-      queries.taskByIdGet(taskId),
+      GoalQueries.goalsGet(userId),
+      TagQueries.tagsGet(userId),
+      TaskQueries.taskByIdGet({ taskId, userId }),
     ]);
     return res.render("layout/noSidebarLayout", {
       title: "Edit Task Form",
@@ -151,13 +154,14 @@ async function editTaskFormControllerPost(req, res) {
   }
 
   try {
-    await queries.editTaskPost({
+    await TaskQueries.editTaskPost({
       title,
       description,
       goalId: goals,
       tagsIds: tagList,
       isoDate,
       taskId,
+      userId,
     });
     res.redirect("/");
   } catch (err) {
@@ -167,10 +171,11 @@ async function editTaskFormControllerPost(req, res) {
 }
 
 async function taskDelete(req, res) {
+  const userId = req.user.id;
   const taskId = Number(req.params.taskId);
 
   try {
-    await queries.taskDelete(taskId);
+    await TaskQueries.taskDelete({ taskId, userId });
     res.redirect("/");
   } catch (err) {
     console.error("Error in taskDelete:", err.message);

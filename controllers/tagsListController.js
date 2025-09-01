@@ -1,8 +1,9 @@
-const queries = require("../db/queries");
+const { TagQueries } = require("../db/queries");
 
 async function tagsController(req, res) {
+  const userId = req.user.id;
   try {
-    const tags = await queries.tagsGet();
+    const tags = await TagQueries.tagsGet(userId);
 
     res.render("layout/noSidebarLayout", {
       title: "Tags",

@@ -1,8 +1,9 @@
-const queries = require("../db/queries");
+const { GoalQueries } = require("../db/queries");
 
 async function goalsController(req, res) {
+  const userId = req.user.id;
   try {
-    const goals = await queries.goalsGet();
+    const goals = await GoalQueries.goalsGet(userId);
 
     res.render("layout/noSidebarLayout", {
       title: "Goals",

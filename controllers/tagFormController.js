@@ -1,5 +1,5 @@
 const { validationResult } = require("express-validator");
-const queries = require("../db/queries");
+const { TagQueries } = require("../db/queries");
 
 async function newTagFormControllerGet(req, res) {
   res.render("layout/noSidebarLayout", {
@@ -12,6 +12,7 @@ async function newTagFormControllerGet(req, res) {
 }
 
 async function newTagFormControllerPost(req, res) {
+  const userId = req.user.id;
   const rawInput = req.body.name;
   const errors = validationResult(req);
 
@@ -34,8 +35,9 @@ async function newTagFormControllerPost(req, res) {
 
   try {
     for (const name of tagNames) {
-      await queries.newTagPost({
+      await TagQueries.newTagPost({
         name,
+        userId,
       });
     }
 
@@ -46,10 +48,11 @@ async function newTagFormControllerPost(req, res) {
 }
 
 async function editTagFormControllerGet(req, res) {
+  const userId = req.user.id;
   const tagId = req.params.tagId;
 
   try {
-    const tag = await queries.tagByIdGet(tagId);
+    const tag = await TagQueries.tagByIdGet({ tagId, userId });
 
     res.render("layout/noSidebarLayout", {
       title: "New Tag: Form",
@@ -66,6 +69,7 @@ async function editTagFormControllerGet(req, res) {
 }
 
 async function editTagFormControllerPost(req, res) {
+  const userId = req.user.id;
   const tagId = Number(req.params.tagId);
   const { name } = req.body;
 
@@ -84,9 +88,10 @@ async function editTagFormControllerPost(req, res) {
   }
 
   try {
-    await queries.editTagPost({
+    await TagQueries.editTagPost({
       newName: name,
       tagId,
+      userId,
     });
   } catch (err) {
     console.error("Error in editTagFormControllerPost: ", err.message);
@@ -96,10 +101,11 @@ async function editTagFormControllerPost(req, res) {
 }
 
 async function tagDelete(req, res) {
+  const userId = req.user.id;
   const tagId = Number(req.params.tagId);
 
   try {
-    await queries.tagDelete(tagId);
+    await TagQueries.tagDelete({ tagId, userId });
   } catch (err) {
     console.error("Error in tagDelete: ", err.message);
   }
