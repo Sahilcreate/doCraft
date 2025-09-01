@@ -1,0 +1,88 @@
+<% const {errors, user} = content %>
+<div class="bg-gray-100 flex flex-col items-center py-10 px-4">
+  <% if (errors) { %>
+  <div class="bg-red-100 text-red-800 p-3 rounded-md mb-4">
+    <ul class="list-disc pl-5">
+      <% errors.forEach(error => { %>
+      <li><%= error.msg %></li>
+      <% }) %>
+    </ul>
+  </div>
+  <% } %>
+  <div class="w-full max-w-2xl bg-white p-8 rounded-lg shadow space-y-6">
+    <h2 class="text-2xl font-bold text-gray-800 text-center mb-6">
+      <%= user ? 'Edit Your Username' : 'Create Your Account' %>
+    </h2>
+
+    <% const formAction = user ? "/profile/edit" : "/auth/register" %>
+    <form action="<%= formAction %>" method="POST" class="space-y-6">
+      <!-- Username -->
+      <div>
+        <label for="username" class="block font-semibold text-gray-700">
+          Username
+        </label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          required
+          value="<%= user ? user.username : '' %>"
+          class="mt-1 w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none hover:outline-1"
+        />
+      </div>
+
+      <!-- Password -->
+      <div>
+        <label for="password" class="block font-semibold text-gray-700">
+          Password
+        </label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          required
+          class="mt-1 w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none hover:outline-1"
+        />
+      </div>
+
+      <% if(!user) { %>
+      <!-- Confirm Password -->
+      <div>
+        <label
+          for="passwordConfirmation"
+          class="block font-semibold text-gray-700"
+        >
+          Confirm Password
+        </label>
+        <input
+          type="password"
+          id="passwordConfirmation"
+          name="passwordConfirmation"
+          required
+          class="mt-1 w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none hover:outline-1"
+        />
+      </div>
+      <% }; %>
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        class="w-full bg-blue-600 text-white font-medium py-2 px-4 rounded-lg shadow hover:bg-blue-700 transition-colors cursor-pointer"
+      >
+        <%= user ? 'Update' : 'Register' %>
+      </button>
+    </form>
+
+    <!-- Login redirect -->
+    <%if(!user) {%>
+    <p class="text-center text-gray-600 text-sm mt-6">
+      Already have an account?
+      <a
+        href="/auth/login"
+        class="text-blue-600 hover:text-blue-800 font-medium transition-colors cursor-pointer hover:underline"
+        >Log in</a
+      >
+    </p>
+    <%};%>
+  </div>
+</div>
