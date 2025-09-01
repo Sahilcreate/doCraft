@@ -4,7 +4,16 @@ const { controllers } = require("../controllers/index");
 
 const tagsRouter = Router();
 
-const tagValidationRules = [
+const newTagValidationRules = [
+  body("name")
+    .trim()
+    .notEmpty()
+    .withMessage("Name is required.")
+    .isLength({ max: 200 })
+    .withMessage("Total names must be at most 200 characters."),
+];
+
+const editTagValidationRules = [
   body("name")
     .trim()
     .notEmpty()
@@ -17,7 +26,7 @@ tagsRouter.get("/", controllers.tagsController);
 tagsRouter.get("/form", controllers.newTagFormControllerGet);
 tagsRouter.post(
   "/form",
-  tagValidationRules,
+  newTagValidationRules,
   controllers.newTagFormControllerPost
 );
 
@@ -25,7 +34,7 @@ tagsRouter.get("/:tagId", controllers.tagController);
 tagsRouter.get("/:tagId/form", controllers.editTagFormControllerGet);
 tagsRouter.post(
   "/:tagId/form",
-  tagValidationRules,
+  editTagValidationRules,
   controllers.editTagFormControllerPost
 );
 tagsRouter.post("/:tagId/delete", controllers.tagDelete);
