@@ -1,0 +1,171 @@
+<% const { room, processedMessages, userRole, userId, isMember } = content; %>
+
+<div class="max-w-3xl mx-auto px-4 py-6 space-y-4">
+  <!-- Room Header -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-bold text-blue-600"><%= room.title %></h1>
+      <p class="text-sm text-gray-500">
+        Owner:
+        <span class="font-medium text-gray-700"
+          ><%= room.ownerName || 'Unknown' %></span
+        >
+      </p>
+    </div>
+    <% if (userRole === 'admin' || room.owner_id === userId) { %>
+    <div class="flex gap-2">
+      <!-- Edit -->
+      <form action="/clubhouse/rooms/<%= room.id %>/edit" method="get">
+        <button
+          class="p-2 rounded-md hover:bg-green-200 cursor-pointer"
+          title="Edit"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-5 h-5 text-green-700"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M16.862 3.487a2.25 2.25 0 013.182 3.182L7.5 
+                           19.213l-4.5 1.5 1.5-4.5L16.862 3.487z"
+            />
+          </svg>
+        </button>
+      </form>
+      <!-- Delete -->
+      <form action="/clubhouse/rooms/<%= room.id %>/delete" method="post">
+        <button
+          class="p-2 rounded-md hover:bg-red-200 cursor-pointer"
+          title="Delete"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-5 h-5 text-red-600"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </form>
+    </div>
+    <% } %>
+  </div>
+
+  <!-- Room description -->
+  <p class="text-gray-600 text-sm">
+    <%= room.description || "No description." %>
+  </p>
+
+  <!-- Membership buttons -->
+  <div class="flex gap-3">
+    <% if (isMember) { %>
+    <form action="/clubhouse/rooms/<%= room.id %>/leave" method="post">
+      <button
+        class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 cursor-pointer"
+      >
+        Leave Room
+      </button>
+    </form>
+    <% } else if ((userRole === 'guest' && room.title === 'global') || userRole
+    !== 'guest') { %>
+    <form action="/clubhouse/rooms/<%= room.id %>/join" method="post">
+      <button
+        class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 cursor-pointer"
+      >
+        Join Room
+      </button>
+    </form>
+    <% } %>
+  </div>
+
+  <div class="flex flex-col h-full">
+    <!-- Messages area -->
+    <div id="messages-container" class="flex-1 overflow-y-auto space-y-4 p-4">
+      <% if (processedMessages.length === 0) { %>
+      <p class="text-gray-500 italic">No messages yet. Be the first!</p>
+      <% } else { %> <% processedMessages.forEach((msg) => { %>
+      <div
+        class="shadow rounded-lg p-3 <%= msg.author_id === userId ? 'bg-green-200' : 'bg-white' %>"
+      >
+        <div class="flex justify-between items-center">
+          <span class="font-semibold"><%= msg.authorName %></span>
+          <span
+            class="text-xs <%= msg.author_id === userId ? 'text-gray-600' : 'text-gray-400' %>"
+            ><%= new Date(msg.created_at).toLocaleString() %></span
+          >
+        </div>
+        <p class="mt-2 text-gray-800"><%= msg.content %></p>
+
+        <% if (userRole !== 'guest' && msg.canDelete) { %>
+        <form
+          action="/clubhouse/rooms/<%= room.id %>/message/<%= msg.id %>/delete"
+          method="post"
+          class="mt-2"
+        >
+          <button
+            type="submit"
+            class="text-red-500 text-sm hover:underline cursor-pointer"
+          >
+            Delete
+          </button>
+        </form>
+        <% } %>
+      </div>
+      <% }); %> <% } %>
+    </div>
+
+    <!-- Form at bottom -->
+    <% if (isMember) { %>
+    <form
+      action="/clubhouse/rooms/<%= room.id %>/message/new"
+      method="post"
+      class="p-4"
+    >
+      <div class="flex items-center gap-2">
+        <textarea
+          name="content"
+          class="w-full border-2 border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 hover:outline-1"
+          placeholder="Write your message..."
+          required
+        ></textarea>
+        <button
+          class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 cursor-pointer"
+        >
+          Send
+        </button>
+      </div>
+    </form>
+    <% } else { %>
+    <div class="border-t bg-gray-50 p-4 text-center text-gray-500 italic">
+      You must join this room to send messages.
+    </div>
+    <% } %>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const messagesContainer = document.getElementById("messages-container");
+    if (messagesContainer) {
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    <% if (isMember) { %>
+      // Auto-focus the textarea if user is a member
+      const input = document.querySelector("textarea[name='content']");
+      if (input) input.focus();
+    <% } %>
+  });
+</script>

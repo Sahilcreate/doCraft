@@ -1,0 +1,130 @@
+<% const {rooms, joinedRoomIds, userRole, userId} = content%>
+<div class="clubhouse-container space-y-8 px-4 pt-4 max-w-3xl mx-auto">
+  <!-- Heading -->
+  <div class="text-center font-roboto">
+    <h1 class="text-4xl font-bold text-blue-600">Clubhouse</h1>
+    <p class="mt-2 text-gray-600">
+      Explore and join rooms to connect, share, and collaborate with others.
+      Create your own space or participate in existing discussions.
+    </p>
+  </div>
+
+  <!-- Create Room + Filter -->
+  <div class="flex items-center justify-between">
+    <% if (userRole !== "guest") { %>
+    <a
+      href="/clubhouse/rooms/new"
+      class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+    >
+      + Create Room
+    </a>
+    <% } %>
+
+    <div class="flex items-center gap-2">
+      <input
+        type="checkbox"
+        id="joinedFilter"
+        class="h-4 w-4 text-blue-600 border-gray-300 rounded cursor-pointer"
+        onchange="toggleJoinedFilter()"
+      />
+      <label for="joinedFilter" class="text-sm text-gray-700 cursor-pointer">
+        Only show rooms you have joined
+      </label>
+    </div>
+  </div>
+
+  <!-- Rooms List -->
+  <div class="rooms-wrapper space-y-4">
+    <% if (rooms.length === 0) { %>
+    <p class="text-gray-500 italic">
+      No rooms available yet. Be the first to create one!
+    </p>
+    <% } else { %> <% rooms.forEach(room => { %>
+    <div
+      class="room-card bg-white shadow rounded-lg p-5 flex justify-between items-start"
+      data-joined="<%= joinedRoomIds.includes(room.id) %>"
+    >
+      <!-- Left: Title & Description -->
+      <div class="flex-1">
+        <a
+          href="/clubhouse/rooms/<%= room.id %>"
+          class="text-xl font-semibold text-gray-800 hover:text-blue-600 hover:underline"
+        >
+          <%= room.title %>
+        </a>
+        <p class="text-gray-600 mt-1 text-sm line-clamp-2">
+          <%= room.description || "No description provided." %>
+        </p>
+      </div>
+
+      <!-- Right: Admin/Owner Actions -->
+      <% if (userRole === "admin" || room.owner_id === userId) { %>
+      <div class="flex items-center gap-2 ml-4">
+        <!-- Edit -->
+        <a
+          href="/clubhouse/rooms/<%= room.id %>/edit"
+          class="p-2 hover:bg-green-100 rounded-lg transition"
+          title="Edit Room"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-5 h-5 text-green-700"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M16.862 3.487a2.25 2.25 0 013.182 3.182L7.5 
+                           19.213l-4.5 1.5 1.5-4.5L16.862 3.487z"
+            />
+          </svg>
+        </a>
+
+        <!-- Delete -->
+        <form action="/clubhouse/rooms/<%= room.id %>/delete" method="POST">
+          <button
+            type="submit"
+            class="p-2 hover:bg-red-100 rounded-lg transition cursor-pointer"
+            title="Delete Room"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-5 h-5 text-red-600"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </form>
+      </div>
+      <% } %>
+    </div>
+    <% }) %> <% } %>
+  </div>
+</div>
+
+<script>
+  function toggleJoinedFilter() {
+    const checkbox = document.getElementById("joinedFilter");
+    const cards = document.querySelectorAll(".room-card");
+
+    cards.forEach((card) => {
+      const joined = card.getAttribute("data-joined") === "true";
+      if (checkbox.checked && !joined) {
+        card.style.display = "none";
+      } else {
+        card.style.display = "flex";
+      }
+    });
+  }
+</script>
