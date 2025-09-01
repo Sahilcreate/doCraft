@@ -10,6 +10,7 @@ const pool = new Pool({
     rejectUnauthorized: true,
     ca: Buffer.from(process.env.CA_CERT, "base64").toString(),
   },
+  // connectionString: process.env.DATABASE_URL,
 });
 
 pool.on("error", (err) => {
