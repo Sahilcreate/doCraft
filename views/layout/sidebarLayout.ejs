@@ -15,9 +15,10 @@
           <%- include('../partials/sidebar', { sidebar }) %>
         </div>
         <div class="content-wrapper flex-1 p-8">
-          <% const contentType = { index: '../index', goalDetail:
-          '../goals/detail', tagDetail: '../tags/detail' }[content.type]; %> <%-
-          include(contentType, { content }) %>
+          <% const contentType = { index: '../index', mainPage:
+          '../tasks/mainPage',goalDetail: '../goals/detail', tagDetail:
+          '../tags/detail' }[content.type]; %> <%- include(contentType, {
+          content }) %>
         </div>
       </div>
     </div>

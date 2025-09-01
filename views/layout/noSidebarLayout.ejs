@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%= title %></title>
     <link rel="stylesheet" href="/styles/build.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100..1000&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body class="min-h-screen flex flex-col bg-gray-100">
     <%- include('../partials/header') %>
@@ -14,8 +20,10 @@
         <% const contentType = { goals: "../goals/list", goalForm:
         "../goals/form", tags: "../tags/list", tagForm: "../tags/form", task:
         "../tasks/view", taskForm: "../tasks/form", profile: "../profile",
-        messageOnly: "../messageOnly" }[content.type]; %> <%-
-        include(contentType, { content }) %>
+        messageOnly: "../messageOnly", login: "../auth/login", register:
+        "../auth/register", roomsList: "../clubhouse/roomsList", roomDetail:
+        "../clubhouse/roomDetail", roomForm: "../clubhouse/roomForm"
+        }[content.type]; %> <%- include(contentType, { content }) %>
       </div>
     </div>
 

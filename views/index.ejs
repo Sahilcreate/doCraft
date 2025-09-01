@@ -1,2 +1,128 @@
-<% const {tasks} = content %>
-<div class="content"><%- include('tasks/card', { tasks }) %></div>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/styles/build.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100..1000&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="flex flex-col min-h-screen bg-gray-50">
+    <!-- Header -->
+    <!-- Header -->
+    <div class="header-container bg-white shadow-md border-b">
+      <div class="header-wrapper flex justify-between items-center px-10 py-4">
+        <div
+          class="logo-container flex-none flex items-center text-xl font-bold text-gray-800"
+        >
+          <a href="/" class="hover:text-blue-600 transition-colors">
+            doCraft
+          </a>
+        </div>
+
+        <!-- Push this container to the right with ml-auto -->
+        <div
+          class="profile-container justify-center flex gap-6 text-gray-700 text-base font-medium"
+        >
+          <a href="/auth/login" class="hover:text-blue-600 transition-colors"
+            >Login</a
+          >
+          <a href="/auth/register" class="hover:text-blue-600 transition-colors"
+            >Register</a
+          >
+        </div>
+      </div>
+    </div>
+
+    <!-- Hero Section -->
+    <main class="flex-grow flex items-center justify-center text-center px-6">
+      <div>
+        <h1 class="font-roboto text-8xl font-black text-gray-900">
+          WELCOME TO <span class="text-blue-600">doCraft</span>
+        </h1>
+
+        <p class="mt-6 text-lg md:text-xl text-gray-700 max-w-2xl mx-auto">
+          Organize your <span class="font-semibold">tasks</span>,
+          <span class="font-semibold">goals</span>, and
+          <span class="font-semibold">tags</span> seamlessly.
+        </p>
+        <div class="mt-10 space-x-4">
+          <a
+            href="/auth/login"
+            class="px-6 py-3 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition-colors text-lg font-semibold"
+          >
+            Get Started
+          </a>
+          <a
+            href="/auth/register"
+            class="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg shadow hover:bg-gray-300 transition-colors text-lg font-semibold"
+          >
+            Register
+          </a>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t text-gray-600 text-sm mt-auto">
+      <div
+        class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between"
+      >
+        <div>
+          &copy; <%= new Date().getFullYear() %> doCraft. All rights reserved.
+        </div>
+        <div class="space-x-4">
+          <a class="hover:text-blue-600 transition-colors cursor-pointer"
+            >Privacy</a
+          >
+          <a class="hover:text-blue-600 transition-colors cursor-pointer"
+            >Terms</a
+          >
+          <a class="hover:text-blue-600 transition-colors cursor-pointer"
+            >Contact</a
+          >
+        </div>
+      </div>
+
+      <!-- GitHub Footer -->
+      <div class="max-w-7xl mx-auto px-6 pb-4 flex justify-center">
+        <a
+          href="https://github.com/Sahilcreate/doCraft"
+          target="_blank"
+          class="flex items-center gap-2 hover:underline"
+        >
+          <svg
+            class="w-5 h-5"
+            fill="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M12 0C5.373 0 0 5.373 0 12c0 5.303 
+             3.438 9.8 8.205 11.387.6.113.82-.26.82-.577 
+             0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61
+             -.546-1.387-1.333-1.756-1.333-1.756-1.09-.745.083-.729.083-.729
+             1.205.085 1.84 1.237 1.84 1.237 1.07 1.834 2.807 1.304 
+             3.492.997.108-.775.418-1.305.762-1.604-2.665-.305-5.466-1.332-5.466-5.931
+             0-1.31.468-2.381 1.236-3.221-.124-.303-.536-1.523.117-3.176 0 0 1.008-.322 
+             3.3 1.23a11.51 11.51 0 013.003-.404c1.02.005 2.047.138 
+             3.003.404 2.29-1.552 3.296-1.23 3.296-1.23.655 1.653.243 
+             2.873.12 3.176.77.84 1.234 1.911 1.234 3.221 
+             0 4.61-2.805 5.624-5.475 5.921.43.371.823 1.102.823 
+             2.222 0 1.604-.015 2.896-.015 3.286 
+             0 .319.216.694.825.576C20.565 21.796 24 17.298 
+             24 12c0-6.627-5.373-12-12-12z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          View Project on GitHub
+        </a>
+      </div>
+    </footer>
+  </body>
+</html>
