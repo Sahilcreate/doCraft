@@ -34,6 +34,7 @@ const taskValidationRules = [
     .withMessage("Invalid date format"),
 ];
 
+tasksRouter.get("/", controllers.tasksController);
 tasksRouter.get("/form", controllers.newTaskFormControllerGet);
 tasksRouter.post(
   "/form",
@@ -49,6 +50,6 @@ tasksRouter.post(
 );
 tasksRouter.post("/:taskId/delete", controllers.taskDelete);
 tasksRouter.post("/:taskId/toggle", controllers.taskToggle);
-tasksRouter.get("/:taskId", controllers.tasksController);
+tasksRouter.get("/:taskId", controllers.singleTaskController);
 
 module.exports = { tasksRouter };
