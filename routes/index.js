@@ -1,4 +1,5 @@
 const { authRouter } = require("./auth");
+const { clubRouter } = require("./clubRouter");
 const { goalsRouter } = require("./goalsRouter");
 const { indexRouter } = require("./indexRouter");
 const { profileRouter } = require("./profileRouter");
@@ -12,6 +13,7 @@ const routes = {
   goalsRouter,
   tasksRouter,
   authRouter,
+  clubRouter,
 };
 
 module.exports = { routes };

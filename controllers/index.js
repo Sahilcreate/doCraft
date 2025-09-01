@@ -1,10 +1,23 @@
 const {
   showLogin,
-  login,
   showRegister,
   register,
   logout,
+  guest,
 } = require("./authController");
+const {
+  roomsList,
+  roomDelete,
+  roomDetail,
+  roomCreateGet,
+  roomCreatePost,
+  roomEditGet,
+  roomEditPost,
+  messageCreate,
+  messageDelete,
+  roomJoin,
+  roomLeave,
+} = require("./clubController");
 const { goalController } = require("./goalDetailController");
 const {
   newGoalFormControllerGet,
@@ -15,7 +28,11 @@ const {
 } = require("./goalFormController");
 const { goalsController } = require("./goalsListController");
 const { indexController } = require("./indexController");
-const { profileController } = require("./profileController");
+const {
+  profileController,
+  editProfileGet,
+  editProfilePost,
+} = require("./profileController");
 const { tagController } = require("./tagDetailController");
 const {
   newTagFormControllerGet,
@@ -32,11 +49,17 @@ const {
   editTaskFormControllerPost,
   taskDelete,
 } = require("./taskFormController");
-const { tasksController, taskToggle } = require("./tasksController");
+const {
+  singleTaskController,
+  taskToggle,
+  tasksController,
+} = require("./tasksController");
 
 const controllers = {
   indexController,
   profileController,
+  editProfileGet,
+  editProfilePost,
   goalController,
   goalsController,
   newGoalFormControllerGet,
@@ -52,6 +75,7 @@ const controllers = {
   editTagFormControllerPost,
   tagDelete,
   tasksController,
+  singleTaskController,
   taskToggle,
   newTaskFormControllerGet,
   newTaskFormControllerPost,
@@ -59,10 +83,21 @@ const controllers = {
   editTaskFormControllerPost,
   taskDelete,
   showLogin,
-  login,
+  guest,
   showRegister,
   register,
   logout,
+  roomsList,
+  roomDetail,
+  roomDelete,
+  roomCreateGet,
+  roomCreatePost,
+  roomEditGet,
+  roomEditPost,
+  roomJoin,
+  roomLeave,
+  messageCreate,
+  messageDelete,
 };
 
 module.exports = { controllers };
