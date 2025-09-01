@@ -1,22 +1,43 @@
 # doCraft App
 
-A demo Inventory Management system built with **Node.js**, **Express**, **PostgreSQL**, and **Tailwind CSS**. This app allows users to manage tasks, goals, and tags – perfect for organizing productivity or store inventory-style items.
+A demo productivity and collaboration app built with **Node.js**, **Express**, **PostgreSQL**, and **Tailwind CSS**.  
+It started as an **Inventory/Task Manager** but has expanded into a **Clubhouse** feature for rooms, discussions, and analytics.
 
 > Built as part of an educational assignment for learning backend fundamentals with PostgreSQL and Express.
 
 ---
 
-## Features
+## ✨ Features
 
-- Add, edit, delete **tasks**, **goals**, and **tags**
-- View detailed pages for each goal, task, or tag
+### Core Productivity
+
+- Add, edit delete **tasks**, **goals**, and **tags**
 - Associate tags and goals with tasks
-- Modular structure using routes and controllers
-- Server-rendered views with EJS
-- Tailwind CSS styling
+- View detailed pages for each goal, task, or tag
+
+### Clubhouse
+
+- Browse all **rows** (public discussion spaces)
+- Join/Unjoin rooms
+- Create, edit, and delete rooms (with **owner/admin premissions**)
+- Post messages inside rooms
+- Room detial pages with real-time-style message display (scroll to latest)
+
+### Profile & Analytics
+
+- Personal **Profile Page** showing:
+  - Your created **tasks**, **goals**, **tags**
+  - Rooms you've joined
+  - Messages you've posted (with room reference)
+- Update username (non-guests only)
+- **Guests** users can browse but not edit/join/create
+
+### General
+
+- Modular structure with routes and controllers
+- Server-rendered views with EJS + TailwindCSS
+- Error handling pages (`messageOnly` component)
 - Sample data seeding via script
-- Public by default — no user auth yet
-- A **demo user** exists for future implementation of authentication (already linked in DB). Currently, this user’s data is **visible to everyone**.
 
 ---
 
@@ -25,47 +46,76 @@ A demo Inventory Management system built with **Node.js**, **Express**, **Postgr
 ```
 .
 ├── app.js
-├── controllers/
-├── db/
-├── middlewares/
-├── public/
-├── routes/
-├── tests/
-├── views/
-├── notes/
-└── ...
+├── ca_base64.txt
+├── ca.pem
+├── config                # passport.js configuration logic
+├── controllers           # route logic
+├── db                    # migrations + seeders + queries
+├── middlewares           # auth + role checks
+├── notes                 # dev notes & docs
+├── package.json
+├── package-lock.json
+├── postcss.config.js
+├── public                # static assets
+├── README.md
+├── routes                # route definitions
+├── tailwind.config.js
+├── tests
+└── views                 # EJS templates
+
 ```
 
 ---
 
-## Tech Stack
+## ⚙️ Tech Stack
 
 - **Backend**: Node.js, Express.js
-- **Database**: PostgreSQL (via \`pg\`)
+- **Authentication**: Passport.js (Local Strategy)
+- **Database**: PostgreSQL (via `pg`)
 - **Templating**: EJS
 - **Styling**: Tailwind CSS
 - **Testing**: Node.js + custom test file
-- **Dev Tools**: dotenv, nodemon
+- **Dev Tools**: dotenv, nodemon, concurrently
 
 ---
 
-## Entities & Relationships
+## 🗃️ Entities & Relationships
 
-- **Goals**: A user-defined objective. Can be assigned to multiple tasks.
-- **Tasks**: Individual units of work. Each task can belong to one goal and many tags.
-- **Tags**: Labels for organizing tasks. Many-to-many relation with tasks.
-- **User**: Currently just a placeholder \`demo\` user in the DB.
+### Users
 
-Relational structure:
+- Can create multiple goals, tasks, rooms, and messages.
+- Role based (`guest`,`user`,`admin`)
+- Guests: restricted actions.
 
-```
-User ---< Goals
-User ---< Tasks >---< Tags
-```
+### Goals
+
+- Belong to a user.
+- Can have multiple tasks
+
+### Tasks
+
+- Belong to a goal(nullable) and a user.
+- Many-to-many with tags
+
+### Tags
+
+- Independent labels
+- Many-to-many with tasks
+
+### Rooms
+
+- Created by user (owner).
+- Users can join multiple rooms.
+- Owners/admins can delete/edit their rooms.
+
+### Messages
+
+- Belong to a user and a room
+- Displayed in room detail pages
 
 ---
 
-## Running Locally
+## 🚀 Running Locally
 
 ### 1. Clone the repo
 
@@ -92,22 +142,18 @@ DB_PORT=5432
 DB_DATABASE=inventory
 ```
 
-### 4. Create Tables
-
-```bash
-node db/addTables.js
-```
-
-### 5. Seed Data
+### 4. Create Tables and Seed data
 
 ```bash
 node db/populatedb.js
+node db/addTables.js
+node db/clubTables.js
 ```
 
 ### 6. Start the server
 
 ```bash
-npm start
+npm run dev
 ```
 
 ---
@@ -117,7 +163,7 @@ npm start
 To deploy:
 
 1. Create a production PostgreSQL DB (like Railway or Supabase)
-2. Update \`.env\` with production DB creds
+2. Update `.env` with production DB creds
 3. Seed your production DB with the same scripts
 4. Use any Node-compatible host (like Render, Vercel with server functions)
 
@@ -125,12 +171,18 @@ To deploy:
 
 ## Future Plans
 
-- [ ] Add full **user authentication**
-- [ ] Prevent users from accessing others’ data
-- [ ] Allow only authenticated users to create/edit/delete
+- [x] Add full **user authentication**
+- [x] Prevent users from accessing others’ data
+- [x] Allow only authenticated users to create/edit/delete
 - [ ] Protect destructive actions via **admin confirmation**
-- [ ] Make it prettier with better Tailwind layout
-- [ ] Separate UI logic with React and deliver db with express API
+- [x] Make it prettier with better Tailwind layout
+- [ ] React frontend + Express REST API backend
+- [ ] Real-time updates with WebSockets (messages in rooms)
+- [ ] Direct user-to-user messaging
+- [ ] Infinite scroll / partial load for messages (like Discord)
+- [ ] Improved analytics dashboard using charts.js
+- [ ] Display tasks with better clarity.
+- [ ] Add subtasks functionality
 
 ---
 

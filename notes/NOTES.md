@@ -435,3 +435,280 @@ Oh and adding recurring task functionality. That would be cool. Also to handle e
 Not pagination, don't think that's needed.
 
 Also learn how to properly link database. Like I encountered problem while seeding the date. Node was rejecting the certificate and i had to seed the data without any certificate. Didn't get any answers at that time. Will try to look for it once more or ask on TOP Discord.
+
+## 19-08-2025
+
+Instead of creating a separate project to practice authentication, I’ll integrate a Clubhouse (community) feature directly into this app. A user system with a database already exists as a skeleton, so the main tasks are:
+
+- Implementing routes for community features.
+- Adding role-based logic (e.g., admin, member, demo).
+- Rendering views selectively based on user roles.
+
+This way, authentication and authorization will grow organically with the app instead of being handled in isolation.
+
+## 20-08-2025
+
+I am having some problem with understanding the flow for Authentication & Authorization. Let's revise it:
+
+### Authentication & Authorization Flow
+
+**1. User Registration**
+
+- User submits `username` + `password`
+- Server checks if username already exists.
+- If unique:
+  - Password is hashed with `bcryptjs`
+  - New user is stored in `users` table with role = `user` (default)
+
+**2. User Login**
+
+- User submits `username` + `password`.
+- Passport's `LocalStrategy` runs:
+  - Look up user in `users` table by username
+  - Compare submitted passrod with stored hash using `bcryptjs`
+  - If valid -> return full user object.
+- Passport stores only `user.id` in session (`serializeUser`).
+- On each request, `deserializeUser` fetches the full user row -> available as `req.user`.
+
+**3. Sessions**
+
+- `express-session` + `connect-pg-simple` stores session in PostgreSQL.
+- Session ID is stored in secure cookie.
+- On each request, session middleware fethes user from DB if session exists.
+- `req.user` and `res.locals.currentUser` are available in controllers/views.
+
+**4. Authorization**
+
+- Each user has a `role` column in the `users` table:
+  - `"user"` -> normal user.
+  - `"demo"` -> limited user (shared demo account).
+  - `"admin"`-> elevated privileges.
+- Middleware guards protected routes:
+  - `ensureAuthenticated` -> only logged-in users can access.
+  - `ensureAdmin` -> only admin role can access.
+  - `restrictDemo` -> demo users can't create posts.
+
+**5. Access Control**
+
+- **Logged-in user** -> can manage their own goals, tasks, tags and see post authors.
+- **Demo user** -> can use shared tasks/goals/tags but cannot post, and cannot see post authors.
+- **Admin** -> can delete posts/comments and manage users.
+
+I can now see why tests are important. My app was and is working but it's all false positives. The queries where not looking for any user specific data and were fetching all global data. There were no user restriction. All tags are global. So many problems and still, STILL the app worked. FALSE POSITIVE. Have to fix all those issues and integrate authentication after that. Then i have to add authorization too.
+
+## 22-08-2025
+
+I decided to make `tags` unique to `user`.
+
+I following queries will add `user_id` column in tags, populating it with `demo` user id and setting and setting a constraint where `user_id` can't be `NULL`.
+
+```bash
+ALTER TABLE tags ADD COLUMN user_id INT REFERENCES users(id) ON DELETE CASCADE;
+
+UPDATE tags SET user_id = 1 WHERE user_id IS NULL;
+
+ALTER TABLE tags ALTER COLUMN user_id SET NOT NULL;
+```
+
+Previously, when we were inserting tags with:
+
+```bash
+INSERT INTO tags (name) VALUES ($1) ON CONFLICT (name) DO NOTHING;
+```
+
+If **any tag exists with the same `name`**, the insert is skipped. But this check was **global** across all users, because it only looks at he `name` column.  
+So I checked for constraints existing on `tags` with `\d tags` and found
+
+```bash
+"tags_name_key" UNIQUE CONSTRAINT, btree (name)
+```
+
+We dropped that constraint with
+
+```bash
+ALTER TABLE tags DROP CONSTRAINT tags_name_key;
+```
+
+And created a per-user uniqueness:
+
+```bash
+CREATE UNIQUE INDEX unique_user_tag
+ON tags (user_id, name);
+```
+
+It however gave error first when i tried to do
+
+```bash
+DROP INDEX IF EXISTS tags_name_key;
+
+ERROR: cannot drop index tags_name_key because constraint tags_name_key on table tags requires it
+HINT: You can drop constraint tags_name_key on table tags instead.
+```
+
+Kind of like telling that it isn't a standalone index I created but actually the backing index for a UNIQUE constraint that was auto-created when I first declared `name` as `UNIQUE`;
+
+## 28-08-2025 / 29-08-2025
+
+These last few days went in configuring passport-local for the project. How the flow will work and all. In addition, i have moved the `/` route to `/tasks` routes and now `/` route is a public page with no authentication required. Also i have added a middleware `ensureAuthenticated` to protect desired routes.
+
+I am also adding `demo` user option so i am now reading `req.login` function and how does it fit in the flow of passport.
+
+> `passport.authenticate()` middleware invokes `req.login()` automatically. This function is primarily used when users sign up, during which `req.login()` can be invoked to automatically log in the newly registered user.
+
+### `/clubhouse` Flow
+
+1. **Route Protection**
+
+- All `/clubhouse` routes are protected with `ensureAuthenticated`
+- Access depends on `req.user.role` (`guest`,`user`,`admin`)
+
+2. **Role Capabilities**
+
+- **Guest**
+  - **Read-only**.
+  - **Can only**:
+    - Visit `/clubhouse`.
+    - See messages **only** in `global` room.
+    - View messages but **not authors** (display as "Anonymous").
+  - **Cannot**:
+    - Send messages.
+    - Join/create/edit/delete rooms.
+    - Delete any messages.
+- **User**
+  - **Standart member** with room ownership.
+  - **Can**:
+    - See **all rooms**
+    - Join other rooms
+    - Create new rooms (`/clubhouse/rooms/new`)
+    - Edit or delete **their own rooms**
+    - Send messages in **any room they've joined**
+    - delete messages **only in their own rooms** (acts like a room admin)
+    - See authors of all messages
+  - **Cannot**
+    - Delete rooms/messages they don't own
+- **Admin**
+  - **Superuser** privileges
+  - Inherits all **user** abilities.
+  - Extra powers:
+    - Delete any message (even in `global`)
+    - Delete any room
+    - Moderate content platform-wide
+
+3. **Routes Breakdown**
+
+- **Rooms**
+
+  - **GET /clubhouse/rooms** -> list all rooms
+
+    - **Guest** -> only sees `global`.
+    - **User** -> sees all rooms.
+    - **Admin** -> sees all rooms.
+
+  - **GET /clubhouse/rooms/new** -> form to create a new room
+
+    - **User** ✅
+    - **Admin** ✅
+    - **Guest** ❌
+
+  - **POST /clubhouse/rooms** -> submit new room
+
+    - **User/Admin** ✅
+    - **Guest** ❌
+
+  - **GET /clubhouse/rooms/:roomId** -> view room
+
+    - **Guest** -> only if `roomId = global` (no authors, no input box).
+    - **User/Admin** -> full access (authors + message form).
+
+  - **GET /clubhouse/rooms/:roomId/edit** -> edit room (title/description)
+
+    - **User** -> only if they own the room.
+    - **Admin** -> always.
+    - **Guest** ❌
+
+  - **POST /clubhouse/rooms/:roomId/delete** -> delete room
+    - **User** -> only if they own the room.
+    - **Admin** -> always.
+    - **Guest** ❌
+
+- **Messages**
+
+  - **POST /clubhouse/rooms/:roomId/message/new** -> send a message
+
+    - **Guest** ❌
+    - **User** ✅ if joined room.
+    - **Admin** ✅ in any room.
+
+  - **POST /clubhouse/rooms/:roomId/message/:msgId/delete** -> delete message
+    - **Guest** ❌
+    - **User** ✅ if room belongs to them.
+    - **Admin** ✅ always.
+
+## 31-08-2025
+
+### Implemented Features
+
+- **Rooms List**
+
+  - `GET /clubhouse/rooms`
+  - Shows all available rooms.
+  - Displays join/leave buttons depending on membership.
+  - Sends `joinedRoomIds`, `userRole`, and `userId` to EJS for conditional UI.
+
+- **Room Detail**
+
+  - `GET /clubhouse/rooms/:roomId`
+  - Displays room title, description, owner name, and messages.
+  - Messages show author, timestamp, and delete button (if allowed).
+  - Membership controls:
+    - Guests → can only access `global` room.
+    - Members → can leave room & send messages.
+    - Non-members → can join room.
+  - UI auto-scrolls to last message and auto-focuses textarea for members.
+
+- **Join / Leave Room**
+
+  - `POST /clubhouse/rooms/:roomId/join`
+  - `POST /clubhouse/rooms/:roomId/leave`
+  - Guards against redundant join/leave actions.
+  - Restricts guest users (except `global`).
+
+- **Messages**
+
+  - `POST /clubhouse/rooms/:roomId/message/new` → create message (only if member).
+  - `POST /clubhouse/rooms/:roomId/message/:msgId/delete` → delete message (if author, owner, or admin).
+
+- **Room Management**
+  - `GET /clubhouse/rooms/new` → create room form.
+  - `POST /clubhouse/rooms/new` → create room.
+  - `GET /clubhouse/rooms/:roomId/edit` → edit form (only admin/owner).
+  - `POST /clubhouse/rooms/:roomId/edit` → update room.
+  - `POST /clubhouse/rooms/:roomId/delete` → delete room (only admin/owner).
+
+### Database Queries
+
+- `findAllRooms()` → get all rooms.
+- `findRoomById(roomId)` → fetch room details + owner username.
+- `isUserMemberOfRoom({ userId, roomId })` → check membership.
+- `addMembership({ userId, roomId })` → join a room.
+- `removeMembership({ userId, roomId })` → leave a room.
+- `newRoom({ title, description, ownerId })` → create room.
+- `editRoom({ roomId, title, description })` → update room.
+- `deleteRoom(roomId)` → delete room.
+- `findMessageById(msgId)` → fetch message details.
+- `newMessage({ content, authorId, roomId })` → create message.
+- `deleteMessage(msgId)` → delete message.
+- `getMessagesByRoom(roomId)` → fetch all messages of a room.
+- `getUserRooms(userId)` → fetch all rooms joined by user.
+- `findJoinedRoomIds(userId)` → fetch all room's id joined by user.
+
+### EJS Views
+
+- `roomsList.ejs` → show all rooms with join/leave UI.
+- `roomDetail.ejs` → show room details, messages, and input form.
+- `roomForm.ejs` → used for both create/edit room.
+
+### Next Steps
+
+- Add **flash messages** for join/leave/create/edit actions.
+- Possibly add **search/filter** for rooms.
