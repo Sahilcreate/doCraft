@@ -140,6 +140,8 @@ DB_PASSWORD=your_password
 DB_HOST=localhost
 DB_PORT=5432
 DB_DATABASE=inventory
+SESSION_SECRET=your_session_secret
+DATABASE_URL=connection_string_url
 ```
 
 ### 4. Create Tables and Seed data
